@@ -1,0 +1,42 @@
+name: Validate Diagram PR
+
+on:
+  pull_request:
+    paths:
+      - "diagrams/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install diagrams cairosvg lxml
+
+      - name: Check SVGs are valid XML
+        run: |
+          python3 - <<'EOF'
+          import sys
+          from pathlib import Path
+          from lxml import etree
+          errors = []
+          for svg in Path("diagrams").rglob("*.svg"):
+              try:
+                  etree.parse(str(svg))
+              except etree.XMLSyntaxError as e:
+                  errors.append(f"{svg}: {e}")
+          if errors:
+              print("\n".join(errors))
+              sys.exit(1)
+          print(f"All {len(list(Path('diagrams').rglob('*.svg')))} SVGs are valid XML.")
+          EOF
+
+      - name: Post summary
+        if: always()
+        run: echo "Diagram validation complete."

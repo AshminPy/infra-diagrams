@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Generated diagrams (tracked via PRs, not committed directly)
+diagrams/**/*.png
+diagrams/**/*.svg
+
+# Icon ZIPs (downloaded, not committed — icons/ SVGs ARE committed)
+/tmp/
+
+# Env
+.env
+.env.*
+
+# OS
+.DS_Store
